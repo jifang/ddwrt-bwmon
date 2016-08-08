@@ -507,8 +507,8 @@ bwmon.controller('MainController', ['$scope', '$interval', '$http', '$location',
 	};
 
 	$scope.getSize = function(KB) {
-		if (KB / Math.pow(1024, 2) > 1)
-			return $scope.round(KB/Math.pow(1024, 2)) + ' GB';
+// 		if (KB / Math.pow(1024, 2) > 1)
+// 			return $scope.round(KB/Math.pow(1024, 2)) + ' GB';
 
 		if (KB / 1024 > 1)
 			return $scope.round(KB/1024) + ' MB';
