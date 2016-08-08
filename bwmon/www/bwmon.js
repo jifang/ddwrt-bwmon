@@ -473,7 +473,7 @@ bwmon.controller('MainController', ['$scope', '$interval', '$http', '$location',
 		item.postDown = totalDown;
 		item.postUp = totalUp;
 		var now = new Date();
-		item.date = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate() + ' ' + now.getHours() + ':' + now.getMinutes();
+		item.date = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate() + ' ' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
 		$scope.usageData.push(item);
 	};
 

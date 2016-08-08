@@ -109,7 +109,7 @@ case ${1} in
 			
 			grep -v "${MAC}" ${2} > /tmp/db_$$.tmp
 			mv /tmp/db_$$.tmp ${2}
-			echo ${MAC},${POST_USAGE_IN},${POST_USAGE_OUT},${PRE_USAGE_IN},${PRE_USAGE_OUT},$(date "+%Y-%m-%d %H:%M") >> ${2}
+			echo ${MAC},${POST_USAGE_IN},${POST_USAGE_OUT},${PRE_USAGE_IN},${PRE_USAGE_OUT},$(date "+%Y-%m-%d %H:%M:%S") >> ${2}
 		fi
 	done
 
@@ -139,7 +139,7 @@ case ${1} in
 			
 			grep -v "${MAC}" ${2} > /tmp/db_$$.tmp
 			mv /tmp/db_$$.tmp ${2}
-			echo ${MAC},${POST_USAGE_IN},${POST_USAGE_OUT},${PRE_USAGE_IN},${PRE_USAGE_OUT},$(date "+%Y-%m-%d %H:%M") >> ${2}
+			echo ${MAC},${POST_USAGE_IN},${POST_USAGE_OUT},${PRE_USAGE_IN},${PRE_USAGE_OUT},$(date "+%Y-%m-%d %H:%M:%S") >> ${2}
 		fi
 	done
 	;;
