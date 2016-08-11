@@ -25,6 +25,7 @@ rm bwmon.css
 rm bwmon.html
 rm bwmon.js
 rm bwreader.php
+rm reset.php
 rm mac-names.js
 rm ui-bootstrap-tpls.min.js
 rm dnsmasq-conf.js

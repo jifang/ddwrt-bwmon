@@ -146,6 +146,9 @@
 							<label class="btn btn-default" ng-model="displayRate" btn-radio="'KB/s'">KB/s</label>
 						</div>
 					</div>
+					<div class="controls">
+						<label class="btn btn-default" ng-click="resetData()"> Reset </label>
+					</div>
 				</div>
 				<div class="update-counter" ng-hide="serviceEnabled">
 					Next update in: {{ pollCountDown }}

@@ -103,6 +103,8 @@ bwmon.controller('MainController', ['$scope', '$interval', '$http', '$location',
 	}
 	$scope.displayNameType = $scope.displayNameOptions.NAME;
 
+	$scope.resetURL = '/reset.php';
+
 	function average(array) {
 		if (!array || array.length === 0)
 			return 0;
@@ -656,6 +658,10 @@ bwmon.controller('MainController', ['$scope', '$interval', '$http', '$location',
 		else {
 			$scope.sortBy = option;
 		}
+	};
+
+	$scope.resetData = function() {
+		$http.get($scope.resetURL);
 	};
 
 	$scope.init = function() {
