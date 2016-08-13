@@ -1,5 +1,5 @@
 'use strict'
-var bwmon = angular.module('bwmonApp', ['ui.bootstrap']);
+var bwmon = angular.module('bwmonApp', ['ui.bootstrap', 'nvd3']);
 
 bwmon.controller('MainController', ['$scope', '$interval', '$http', '$location', function($scope, $interval, $http, $location) {
 	/**
@@ -103,7 +103,119 @@ bwmon.controller('MainController', ['$scope', '$interval', '$http', '$location',
 	}
 	$scope.displayNameType = $scope.displayNameOptions.NAME;
 
+	/* Visbit modification */
+	$scope.tickTimeout = 1000;  // ms
+	$scope.NUM_DATA = 20;
+
 	$scope.resetURL = '/reset.php';
+
+	// This map is macAddr -> data series map. This map is used for generating the
+	// ploting data
+	$scope.usageSeriesMap = {};
+	$scope.usageTotalMap = {};
+
+	// Currently only support up to 4 device in a single graph.
+	$scope.colors = ['red', 'blue', 'green', 'purple'];
+
+	$scope.plotData = [];
+
+	$scope.options = {
+		chart: {
+			type: 'lineChart',
+			height: 450,
+			margin : {
+					top: 20,
+					right: 20,
+					bottom: 40,
+					left: 55
+			},
+			x: function(d){ return d.x; },
+			y: function(d){ return d.y; },
+			useInteractiveGuideline: true,
+			xAxis: {
+					axisLabel: 'Time (second)'
+			},
+			yAxis: {
+					axisLabel: 'Speed (KB/s)',
+					tickFormat: function(d){
+							return d3.format('.02f')(d);
+					},
+					axisLabelDistance: -10
+			}
+		},
+	};
+
+	// Check if the mac address is needed to be plotted on the graph.
+	// TODO(fei)
+	$scope.isWanted = function(macAddr) {
+		return true;
+	};
+
+	// The given data is filtered data from $scope.filterSection.
+	$scope.updateGraph = function(data) {
+		var resultLines = data.split('\n');
+		angular.forEach(resultLines, function(line) {
+			if (line.trim().length > 0) {
+				var entry = line.split(',');
+				if($scope.isWanted(entry[0])) {
+					$scope.updateDataSeries(entry[0], Number(entry[1]));
+				}
+			}
+		});
+		$scope.plot();
+	};
+
+	// Updates $scope.data so that the new data will be plotted.
+	$scope.plot = function() {
+		$scope.plotData = [];
+		var index = 0;
+		angular.forEach($scope.usageSeriesMap, function(dataSerie, macAddr) {
+			var d = {
+				values: dataSerie,
+				key: $scope.macNames[macAddr.toLowerCase()],
+				color: $scope.colors[index],
+				area: false
+			}
+			$scope.plotData.push(d);
+			index++;
+		});
+	};
+
+	// Updates the total data series.
+	$scope.updateDataSeries = function(macAddr, totalDownload) {
+		if ($scope.usageSeriesMap[macAddr] === undefined) {
+			var arr = [];
+			for (var i = 0; i < $scope.NUM_DATA; i++) {
+				var p = {x:i,y:0};
+				arr.push(p);
+			}
+			$scope.usageSeriesMap[macAddr] = arr;
+			$scope.usageTotalMap[macAddr] = totalDownload;
+		}
+		var nSeries = [];
+		for ( var i = 0; i < $scope.NUM_DATA - 1; i++) {
+			nSeries.push({x:i, y:$scope.usageSeriesMap[macAddr][i+1].y});
+		}
+
+		// update the newest data.
+		nSeries.push({x:($scope.NUM_DATA-1), y:(totalDownload-$scope.usageTotalMap[macAddr])});
+
+		// update total download.
+		$scope.usageTotalMap[macAddr] = totalDownload;
+		$scope.usageSeriesMap[macAddr] = nSeries;
+	};
+
+	$scope.resetData = function() {
+		$http.get($scope.resetURL);
+
+		// Reset plotData.
+		$scope.plotData = [];
+		$scope.usageSeriesMap = {};
+		$scope.usageTotalMap = {};
+		// Reset table data.
+		$scope.usageData = [];
+	};
+	/* Visbit modification ends */
 
 	function average(array) {
 		if (!array || array.length === 0)
@@ -201,7 +313,7 @@ bwmon.controller('MainController', ['$scope', '$interval', '$http', '$location',
 				}
 			}
 		}
-    };
+		};
 
 	$scope.updatemacToIpMapping = function(data) {
 		var regex = /^([0-9.]+)[\s]+[0-9]x[0-9][\s]+[0-9]x[0-9][\s]+([0-9a-zA-Z:]+)/gm;
@@ -405,6 +517,10 @@ bwmon.controller('MainController', ['$scope', '$interval', '$http', '$location',
 				$scope.updateUsage(iptablesData);
 
 				$scope.updateRates();
+
+				// Update visbit grpah for plotting.
+				$scope.updateGraph(filtered);
+
 			}, function(response) {
 				$scope.serviceEnabled = false;
 				oldService();
@@ -660,10 +776,6 @@ bwmon.controller('MainController', ['$scope', '$interval', '$http', '$location',
 		}
 	};
 
-	$scope.resetData = function() {
-		$http.get($scope.resetURL);
-	};
-
 	$scope.init = function() {
 		function tick() {
 			if ($scope.pollCountDown > 1) {
@@ -678,7 +790,7 @@ bwmon.controller('MainController', ['$scope', '$interval', '$http', '$location',
 			}
 		}
 		tick();
-		$interval(tick, 1000);
+		$interval(tick, $scope.tickTimeout);
 
 		var density = $scope.readCookie('bwmon-displayDensity');
 		if (density)

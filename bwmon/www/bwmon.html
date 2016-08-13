@@ -7,10 +7,14 @@
 		<script src="angular.min.js"></script>
 		<script src="ui-bootstrap-tpls.min.js"></script>
 		<script src="mac-names.js"></script>
+		<script src="d3.min.js" charset="utf-8"></script>
+		<script src="nv.d3.min.js"></script>
+		<script src="angular-nvd3.min.js"></script>
 		<script src="bwmon.js"></script>
 
 		<link rel="stylesheet" href="bootstrap.min.css" />
 		<link rel="stylesheet" href="bwmon.css" />
+		<link rel="stylesheet" href="nv.d3.min.css"/>
 
 		<title>Live Bandwidth Stats</title>
 	</head>
@@ -153,6 +157,9 @@
 				<div class="update-counter" ng-hide="serviceEnabled">
 					Next update in: {{ pollCountDown }}
 				</div>
+			</div>
+			<div class="vb-grpah">
+				<nvd3 options="options" data="plotData"></nvd3>
 			</div>
 		</div>
 	</body>
