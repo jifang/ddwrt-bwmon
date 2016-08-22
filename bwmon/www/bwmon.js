@@ -136,7 +136,7 @@ bwmon.controller('MainController', ['$scope', '$interval', '$http', '$location',
 					axisLabel: 'Time (second)'
 			},
 			yAxis: {
-					axisLabel: 'Speed (KB/s)',
+					axisLabel: 'Speed (mbps)',
 					tickFormat: function(d){
 							return d3.format('.02f')(d);
 					},
@@ -193,12 +193,15 @@ bwmon.controller('MainController', ['$scope', '$interval', '$http', '$location',
 			$scope.usageTotalMap[macAddr] = totalDownload;
 		}
 		var nSeries = [];
-		for ( var i = 0; i < $scope.NUM_DATA - 1; i++) {
-			nSeries.push({x:i, y:$scope.usageSeriesMap[macAddr][i+1].y});
+		for (var i = 0; i < $scope.NUM_DATA - 2; i++) {
+			nSeries.push({x:i, y:$scope.usageSeriesMap[macAddr][i+2].y});
 		}
 
 		// update the newest data.
-		nSeries.push({x:($scope.NUM_DATA-1), y:(totalDownload-$scope.usageTotalMap[macAddr])});
+		var val = (totalDownload-$scope.usageTotalMap[macAddr]) / $scope.SERVICE_INTERVAL;
+		for (var i = 0; i < $scope.SERVICE_INTERVAL; i++) {
+			nSeries.push({x:($scope.NUM_DATA - ($scope.SERVICE_INTERVAL) + i + 1), y:(val*8)/1000});
+		}
 
 		// update total download.
 		$scope.usageTotalMap[macAddr] = totalDownload;
