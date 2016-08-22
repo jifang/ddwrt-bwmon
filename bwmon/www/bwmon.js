@@ -114,8 +114,7 @@ bwmon.controller('MainController', ['$scope', '$interval', '$http', '$location',
 	$scope.usageSeriesMap = {};
 	$scope.usageTotalMap = {};
 
-	// Currently only support up to 4 device in a single graph.
-	$scope.colors = ['red', 'blue', 'green', 'purple'];
+	$scope.colors = ['red', 'blue', 'green', 'purple', 'black', 'pink', 'navy', 'gold'];
 
 	$scope.plotData = [];
 
