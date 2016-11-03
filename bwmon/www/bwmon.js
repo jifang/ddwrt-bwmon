@@ -145,8 +145,11 @@ bwmon.controller('MainController', ['$scope', '$interval', '$http', '$location',
 	};
 
 	// Check if the mac address is needed to be plotted on the graph.
-	// TODO(fei)
 	$scope.isWanted = function(macAddr) {
+		var computerName = $scope.getName(macAddr);
+		if (computerName === 'DEMO') {
+			return false;
+		}
 		return true;
 	};
 
